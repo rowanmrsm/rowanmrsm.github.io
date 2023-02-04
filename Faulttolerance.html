@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+<title>Quantum Error Correction</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Righteous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mallanna">
+<link rel = "stylesheet" href = "qecstyle.css"> 
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+</head>
+<body>
+<ul class = "menu">
+<li class = "link"><a href = "index.html">Home</a></li>
+<li class = "link"><a href = "classicalECC.html">Classical Error Correcting Codes</a></li>
+<li class = "link"><a href = "QuantComputers.html">Quantum Computers</a></li>
+<li class = "link"><a href = "QEC.html">Quantum ECC</a></li>
+<li class = "link active"><a href = "Faulttolerance.html">Fault Tolerance</a></li>
+<li class = "link"><a href = "about.html">About, Docs and References</a></li>
+</ul>
+<h1>Fault Tolerance</h1>
+<p>One way in which error-correction protocols are used in quantum computers is making them fault tolerant: by encoding each aspect of the computation, it should be possible to make sure that a single error doesn’t spread and create more than one error per block of qubits going forward. Encoding the computation means using encoded data qubits, but it also requires finding ways to implement gates and measuring on these qubits, among other things. The overall goal is to reduce the probability of an error occurring to a certain threshold, so that the conditions of the Accuracy Threshold Theorem hold: suppose Q is the circuit being used to compute a function. Then for any $\epsilon > 0$, it is possible to find another circuit Q’ which computes a function $\epsilon$-close to C provided its error rate is below a certain threshold. For the Steane code, this threshold is about $10^{-6}$.</p> 
+<p>The error rate includes data storage errors, as well as errors from gates being implemented. Fault-tolerance is defined as the property that a single error in a gate or storage block causes at most one error per coded block of qubits. There is still a possibility of more than a single error occurring, so if the system isn’t set up to deal with this there could still be a cascade of errors, but it’s typically assumed that it’s far more likely that only a single one occurs.</p>
+<img src = "qubitlevels.png" class = "right" width = 33% alt = "A demonstration of the different levels of encoding a set of physical qubits"><p>Many protocols don’t just use one code – they layer multiple encodings using concatenation, which has the effect of reducing the error probability polynomially, although this also increases the number of physical qubits needed to perform the computation. Take an $[n_1,k_1]$ code $C_1$ and an $[n_2, k_2]$ code $C_2$. To concatenate them:
+<ol>
+<li>Form $k_2$ sets of $k_1$ qubits. $C_1$ encodes each of the blocks into $n_1$ qubits. </li>
+<li>For $i = 1$ to $n_1$, take the $i^{th}$ qubit from each block to create a block $b(i)$ of $k_2$ qubits. </li>
+<li>Encode each $b(i)$ using $C_2$, giving a total of $n_1n_2$ qubits used. </li>
+</ol>
+<p>We want this to be a stabiliser code, so generators are needed. A copy of the generating set for $C_1$ is associated with each block in the first step. Then copies of the generators for $C_2$ are associated with each block $b(i)$, which we add to the generating set for our concatenated code, and finally the image of each copy of $C_1$’s generators when $C_2$ is applied to them is also added to the generating set. 
+After encoding the data qubits, we need to figure out how to encode the gates and measurement protocols. The benefit of having a universal set of gates is that we can just find a way to implement these, rather than every possible logic gate that might be needed. </p>
+<p>For most of the gates, it’s easiest to find an encoding by considering their effects on the X and Z operations. For example, the Hadamard gate interchanges these, so it’s just necessary to find a combination of gates that has this effect on $X$ and $Z$ when encoded. Often, this can be done by applying an unencoded Hadamard gate to each qubit in the code block – this bit-wise application is transversal, meaning an operation which either only affects a single qubit at a time, or only causes the ith qubits on different blocks to interact with each other. If  a gate is transversal, then it is fault tolerant, as an error can’t get to more than one qubit in each code block. The CNOT gate is typically implemented transversally as well. 
+The Phase gate leaves the $Z$ operator untouched, but turns the $X$ into $Y = iXZ$, and $Y$ into $X$. 
+The last gate to consider is $\frac{\pi}{8}$, which is often created in a different way to the others. This shifts the phase of$a|0\rangle +b|1\rangle$ to $a|0\rangle+be^{\frac{i\pi}{4}}|1\rangle$. Firstly, ancilla qubits (the same number as in the code block) are prepared so that they are each in the state $\frac{1}{\sqrt{2}}(|0\rangle + e^{\frac{i\pi}{4}}|1\rangle$. Then CNOT gates are used from the ancillas to the code qubits, which creates a superposition where the amplitudes are also superpositions: 
+ $$(a|0\rangle+be^{\frac{i\pi}{4}}|1\rangle))|0\ket+(a|1\rangle+be^{\frac{i\pi}{4}}|0\rangle)|1\rangle$$
+Which means that measurements can be carried out: the act of measuring puts the qubits in one of the amplitude states, and we can tell which one it is depending on the outcome of the measurement. Finally, if the result was one, $SX$ is applied to the qubit to map it into the correct state.</p> 
+<p>Now the gates are encoded, a way of measuring is needed (actually, this is also needed to implement the $\frac{pi}{8}$ gate). It is common for some operations in a computation to be based on the value of some of the qubits, so it is crucial for the way they’re measured to be accurate. Like the $\frac{pi}{8}$ gate, measurements use ancilla qubits. The ancilla qubits are prepared in the state $|00\ldots0\rangle +|11\ldots1\rangle$. The data qubits have a controlled measurement operator applied – this means that the $i^{th}$ qubit is measured only if the ancilla is in the state $|11\ldots1\rangle$. The ancilla qubits are finally decoded using CNOT and H, returning 0 or 1 depending on what the eigenvalue of the data qubit was. These final gates could still fail, so in order to reduce the fault probability, the measurement procedure is repeated 3 times with a new set of ancillas each time.
+Combining all these methods together to create quantum circuits lets computing be done in a more robust way, which is becoming even more important as the size of quantum computers grows – more qubits and gates means more places a fault could occur.
+</p>
+</body>
+</html>

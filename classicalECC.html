@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<title>Quantum Error Correction</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Righteous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mallanna">
+<link rel = "stylesheet" href = "qecstyle.css"> 
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+</head>
+<ul class = "menu">
+<li class = "link"><a href = "index.html">Home</a></li>
+<li class = "link active"><a href = "classicalECC.html">Classical Error Correcting Codes</a></li>
+<li class = "link"><a href = "QuantComputers.html">Quantum Computers</a></li>
+<li class = "link"><a href = "QEC.html">Quantum ECC</a></li>
+<li class = "link"><a href = "Faulttolerance.html">Fault Tolerance</a></li>
+<li class = "link"><a href = "about.html">About, Docs and References</a></li>
+</ul>
+
+<body>
+<h1>Classical Error Correction</h1>
+<img src = "graphics for article.png" class = left width = 500 px><p>In classical communication, it is possible for data transmission to alter the message being transmitted. If there isn’t any way of telling whether or not this has happened, and what exactly the error was, effective and accurate communication isn’t possible. The development of error correcting codes is fundamental to communication, as they allow data to be sent through a ‘noisy’ channel and be recovered, even after corruption. The basis for the design is that changing one, or even more, bits in a block of the coded message should result in a string that isn’t equal to another code string. This makes it clear that something has gone wrong, and offers a possibility for correction: in most codes, there will be one closest code string – that is, the one which has the smallest number of different bits. As it is assumed to be far more likely for one bit to change rather than two, and so on, choosing the closest string will be correct most of the time. </p>
+<p>Here, I will work over the field of two elements, 0 and 1, and refer to it as F. Then a binary message string is equivalent to a vector in Fk, and encoding means mapping it to a vector in Fn. It is typical for the code vectors to be a linear subspace C of Fn, which means that there are a set of generating elements for this subspace. The k generators can be used to define a generating matrix G which is used in the encoding process by setting them as the rows of the matrix. The message blocks m are encoded as x = Gm. However, the subspace can also be defined by its linear relations, creating a parity check matrix H, where C is exactly the set $\{x: H^T = 0\}$. H allows the received message to be checked easily, as any non-code vector will result in a vector different to 0. This vector is called the error syndrome, and in fact indicates which errors have potentially occurred. To carry out a verification after sending a message, then, $Hy^T$ is computed for each received y and compared to a table of possible error syndromes. </p>
+<p>Using the algebraic properties lets us examine how distant the codewords are from each other – the further they are from each other, the more errors can be corrected per block. By using the Hamming distance – the number of different bits between two vectors -  as the distance measurement on the linear space, disjoint spheres can be defined around each code vector. The maximum radius of these will be $\lfloor\frac{(d-1)}{2}\rfloor$ if the minimum distance between codewords is d. Any non-code vector that is different to a code vector by at most $\lfloor\frac{(d-1)}{2}\rfloor$ is then contained in one of the disjoint spheres and hence has a unique closest code vector, which it can be corrected to using nearest neighbour decoding - so $\lfloor\frac{(d-1)}{2}\rfloor$ errors can be corrected by the code. </p>
+
+</body>
+</html>
