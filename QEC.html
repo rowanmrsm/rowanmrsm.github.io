@@ -70,5 +70,10 @@ Here, $k_2$ is the number of message bits that $C_2$ encodes. Luckily, the const
 <tr><td>$g_2$</td><td>$IXXIIXX$</td><td>$g_5$</td><td>$IZZIIZZ$</td></tr>
 <tr><td>$g_3$</td><td>$XIXIXIX$</td><td>$g_6$</td><td>$ZIZIZIZ$</td></tr>
 </table>
+</p>
+<p>
+	<img src = "surface.png" class = "left" alt = "A diagram of the surface code">Another type of code which is commonly researched is the surface code, which uses an array of physical qubits as the encoding method. These are split between data and measurement qubits, with the measurement qubits further divided into X and Z. The action of the X measurement qubits is equivalent to measuring the  stabiliser XXXX on the surrounding data qubits, and ZZZZ for the Z measurement qubits. This results in each data qubit having 2 X and 2 Z operators applied to it (apart from some of those on the boundaries). The codes take advantage of the fact that a pair of X or Z operators won't cause the superpostion to collapse. Measuring the stabilisers also puts the system into a state which is an eigenstate of XXXX and ZZZZ simultaneously. </p>
+	<p> The surface code operates by cycling paralell measurements: all the measurement qubits perform their operation at the same time to ensure the state of all the qubits is an eigenstate, and the combined state is referred to as the quiescent state. This remains the same after being "chosen"by the first code cycle which lets errors be detected. An error in a data qubit will affect the measurement of the adjacent X or Z qubits (or both), letting the type of error and location be determined. An error with a measurement will cause an error in a single measurement, which will usually disappear in the next cycle. 
+</p>
 </body>
 </html>
