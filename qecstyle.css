@@ -30,6 +30,9 @@ font-family: "Mallanna", "Garamond", serif;
 font-size: 20px;
 }
 
+a:link, a:visited{
+  color: black;
+}
 
 ul.menu{
 background-color: rgba(255,0,0,0);
